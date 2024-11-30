@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang=" pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora Científica</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        #calc {
+            width: 100%;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #282c34;
+        }
+
+        #content {
+            background-color: #ffffff;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #output {
+            margin-bottom: 10px;
+        }
+
+        .btn input {
+            width: 60px;
+            height: 60px;
+            margin: 5px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div id="calc">
+        <div id="content">
+            <form>
+                <div id="output">
+                    <input type="text" id='res' disabled>
+                </div>
+                <div class="btn">
+                    <input type="button" value='C' onclick="Clear()">
+                    <input type="button" value='←' onclick="Back()">
+                    <input type="button" value='√' onclick="Solve('sqrt(')">
+                    <input type="button" value='^' onclick="Solve('**')">
+                    <br>
+                    <input type="button" value='7' onclick="Solve('7')">
+                    <input type="button" value='8' onclick="Solve('8')">
+                    <input type="button" value='9' onclick="Solve('9')">
+                    <input type="button" value='/' onclick="Solve('/')">
+                    <br>
+                    <input type="button" value='4' onclick="Solve('4')">
+                    <input type="button" value='5' onclick="Solve('5')">
+                    <input type="button" value='6' onclick="Solve('6')">
+                    <input type="button" value='*' onclick="Solve('*')">
+                    <br>
+                    <input type="button" value='1' onclick="Solve('1')">
+                    <input type="button" value='2' onclick="Solve('2')">
+                    <input type="button" value='3' onclick="Solve('3')">
+                    <input type="button" value='-' onclick="Solve('-')">
+                    <br>
+                    <input type="button" value='0' onclick="Solve('0')">
+                    <input type="button" value='.' onclick="Solve('.')">
+                    <input type="button" value='=' onclick="Result()">
+                    <input type="button" value='+' onclick="Solve('+')">
+                </div>
+            </form>
+        </div>
+    </div>
+    <script>
+        let expression = '';
+
+        function Solve(value) {
+            expression += value;
+            document.getElementById('res').value = expression;
+        }
+
+        function Clear() {
+            expression = '';
+            document.getElementById('res').value = '';
+        }
+
+        function Back() {
+            expression = expression.slice(0, -1);
+            document.getElementById('res').value = expression;
+        }
+
+        function Result() {
+            try {
+                expression = eval(expression.replace('^', '**').replace('sqrt', 'Math.sqrt'));
+                document.getElementById('res').value = expression;
+            } catch (error) {
+                document.getElementById('res').value = 'Erro';
+                expression = '';
+            }
+        }
+    </script>
+</body>
+</html>
