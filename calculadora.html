@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang=" pt-BR">
+<html lang="pt-BR">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -44,33 +44,33 @@
         <div id="content">
             <form>
                 <div id="output">
-                    <input type="text" id='res' disabled>
+                    <input type="text" id='res' disabled aria-label="Resultado">
                 </div>
                 <div class="btn">
-                    <input type="button" value='C' onclick="Clear()">
-                    <input type="button" value='←' onclick="Back()">
-                    <input type="button" value='√' onclick="Solve('sqrt(')">
-                    <input type="button" value='^' onclick="Solve('**')">
+                    <input type="button" value='C' onclick="clearExpression()">
+                    <input type="button" value='←' onclick="backspace()">
+                    <input type="button" value='√' onclick="appendToExpression('Math.sqrt(')">
+                    <input type="button" value='^' onclick="appendToExpression('**')">
                     <br>
-                    <input type="button" value='7' onclick="Solve('7')">
-                    <input type="button" value='8' onclick="Solve('8')">
-                    <input type="button" value='9' onclick="Solve('9')">
-                    <input type="button" value='/' onclick="Solve('/')">
+                    <input type="button" value='7' onclick="appendToExpression('7')">
+                    <input type="button" value='8' onclick="appendToExpression('8')">
+                    <input type="button" value='9' onclick="appendToExpression('9')">
+                    <input type="button" value='/' onclick="appendToExpression('/')">
                     <br>
-                    <input type="button" value='4' onclick="Solve('4')">
-                    <input type="button" value='5' onclick="Solve('5')">
-                    <input type="button" value='6' onclick="Solve('6')">
-                    <input type="button" value='*' onclick="Solve('*')">
+                    <input type="button" value='4' onclick="appendToExpression('4')">
+                    <input type="button" value='5' onclick="appendToExpression('5')">
+                    <input type="button" value='6' onclick="appendToExpression('6')">
+                    <input type="button" value='*' onclick="appendToExpression('*')">
                     <br>
-                    <input type="button" value='1' onclick="Solve('1')">
-                    <input type="button" value='2' onclick="Solve('2')">
-                    <input type="button" value='3' onclick="Solve('3')">
-                    <input type="button" value='-' onclick="Solve('-')">
+                    <input type="button" value='1' onclick="appendToExpression('1')">
+                    <input type="button" value='2' onclick="appendToExpression('2')">
+                    <input type="button" value='3' onclick="appendToExpression('3')">
+                    <input type="button" value='-' onclick="appendToExpression('-')">
                     <br>
-                    <input type="button" value='0' onclick="Solve('0')">
-                    <input type="button" value='.' onclick="Solve('.')">
-                    <input type="button" value='=' onclick="Result()">
-                    <input type="button" value='+' onclick="Solve('+')">
+                    <input type="button" value='0' onclick="appendToExpression('0')">
+                    <input type="button" value='.' onclick="appendToExpression('.')">
+                    <input type="button" value='=' onclick="calculateResult()">
+                    <input type="button" value='+' onclick="appendToExpression('+')">
                 </div>
             </form>
         </div>
@@ -78,25 +78,26 @@
     <script>
         let expression = '';
 
-        function Solve(value) {
+        function appendToExpression(value) {
             expression += value;
             document.getElementById('res').value = expression;
         }
 
-        function Clear() {
+        function clearExpression() {
             expression = '';
             document.getElementById('res').value = '';
         }
 
-        function Back() {
+        function backspace() {
             expression = expression.slice(0, -1);
             document.getElementById('res').value = expression;
         }
 
-        function Result() {
+        function calculateResult() {
             try {
-                expression = eval(expression.replace('^', '**').replace('sqrt', 'Math.sqrt'));
-                document.getElementById('res').value = expression;
+                const result = new Function('return ' + expression)();
+                document.getElementById('res').value = result;
+                expression = result.toString();
             } catch (error) {
                 document.getElementById('res').value = 'Erro';
                 expression = '';
