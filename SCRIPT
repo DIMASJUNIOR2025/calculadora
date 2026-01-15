@@ -1,0 +1,100 @@
+;(function(){
+  let expr = '';
+  const res = document.getElementById('res');
+  const historyEl = document.getElementById('history');
+
+  function updateDisplay(){
+    if(!res) return;
+    res.value = expr || '0';
+    if(historyEl) historyEl.textContent = expr;
+  }
+
+  window.addToExpression = function(val){
+    expr += val;
+    updateDisplay();
+  };
+
+  window.addFunc = function(func){
+    // se houver um número ou ')' antes, insere multiplicação implícita
+    const last = expr.slice(-1);
+    if(/[0-9\.)]$/.test(last) && /^(Math|\w)/.test(func)){
+      expr += '*';
+    }
+    expr += func;
+    updateDisplay();
+  };
+
+  window.clearAll = function(){
+    expr = '';
+    updateDisplay();
+  };
+
+  window.backspace = function(){
+    expr = expr.slice(0, -1);
+    updateDisplay();
+  };
+
+  window.calculate = function(){
+    if(!expr) return;
+    try{
+      // normaliza operadores visuais
+      const normalized = expr.replace(/÷/g, '/').replace(/×/g, '*').replace(/−/g, '-');
+
+      // avalia expressão (permite Math.* vindo dos botões)
+      const fn = new Function('return ' + normalized + ';');
+      let result = fn();
+
+      if(typeof result === 'number' && isFinite(result)){
+        // limita precisão
+        result = +parseFloat(result.toPrecision(12));
+        if(historyEl) historyEl.textContent = normalized + ' =';
+        expr = String(result);
+        updateDisplay();
+      } else {
+        res.value = 'Erro';
+        setTimeout(updateDisplay, 800);
+      }
+    } catch(err){
+      console.error(err);
+      if(res) res.value = 'Erro';
+      setTimeout(updateDisplay, 800);
+    }
+  };
+
+  // suporte a teclado
+  document.addEventListener('keydown', (e) => {
+    if(e.key >= '0' && e.key <= '9'){
+      addToExpression(e.key);
+      e.preventDefault();
+      return;
+    }
+
+    const allowed = {'/':'/', '*':'*', '-':'-', '+':'+', '.':'.', '(':'(', ')':')'};
+    if(allowed[e.key]){
+      addToExpression(allowed[e.key]);
+      e.preventDefault();
+      return;
+    }
+
+    if(e.key === 'Enter'){
+      calculate();
+      e.preventDefault();
+      return;
+    }
+
+    if(e.key === 'Backspace'){
+      backspace();
+      e.preventDefault();
+      return;
+    }
+
+    if(e.key === 'Escape'){
+      clearAll();
+      e.preventDefault();
+      return;
+    }
+  });
+
+  // inicializa display
+  updateDisplay();
+})();
